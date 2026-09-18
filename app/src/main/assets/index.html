@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Gölge Protokolü</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b0f14;color:#edf2f7;font:16px system-ui,sans-serif}
+main{max-width:720px;margin:auto;padding:18px}.card{background:#121923;border:1px solid #273243;border-radius:18px;padding:18px;margin-bottom:14px}
+small{color:#91a0b5;letter-spacing:.12em}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}.stat{font-size:13px}
+.bar{height:8px;background:#26303e;border-radius:9px;overflow:hidden;margin-top:6px}.fill{height:100%;background:#8ab4f8}
+h1{font-size:24px;margin:5px 0}h2{font-size:21px;margin:8px 0 12px}p{line-height:1.55;color:#d6deea}
+button{width:100%;min-height:50px;margin:6px 0;border:1px solid #354359;border-radius:13px;background:#182231;color:white;padding:12px;text-align:left;font-size:16px}
+button:active{background:#26364c}.restart{text-align:center;background:#233654}.result{padding:12px;border:1px solid #354359;border-radius:12px;margin-top:12px;color:#b9c7d9}
+@media(max-width:420px){.stats{grid-template-columns:1fr}.card{padding:15px}}
+</style></head><body><main>
+<div class="card"><small>OPERASYON 01 · 02:17</small><h1>GÖLGE PROTOKOLÜ</h1><div class="stats">
+<div class="stat">Sağlık <b id="ht">100</b><div class="bar"><div id="h" class="fill"></div></div></div>
+<div class="stat">Gizlilik <b id="st">100</b><div class="bar"><div id="s" class="fill"></div></div></div>
+<div class="stat">İstihbarat <b id="it">0</b><div class="bar"><div id="i" class="fill"></div></div></div>
+</div></div>
+<div class="card"><small id="chapter"></small><h2 id="title"></h2><p id="story"></p><div id="choices"></div><div id="result"></div></div>
+<button class="restart" id="restart">Görevi yeniden başlat</button>
+<button class="restart" id="privacyBtn">Gizlilik politikası</button>
+<div class="card" id="privacy" style="display:none"><small>GİZLİLİK POLİTİKASI</small><h2>Gölge Protokolü</h2><p>Bu sürüm hesap oluşturmaz, reklam veya analiz SDK'sı içermez ve uygulama kodu kullanıcıdan kişisel veri toplamaz ya da üçüncü taraflarla paylaşmaz. Oyun ilerlemesi yalnızca açık uygulama oturumu sırasında cihaz belleğinde tutulur ve kalıcı olarak saklanmaz.</p><p>Gizlilikle ilgili sorular veya talepler için Google Play mağaza sayfasındaki <b>Geliştirici iletişim bilgileri</b> bölümünü kullanabilirsiniz. Uygulamanın veri kullanımı gelecekte değişirse bu politika ve Google Play Veri güvenliği beyanı güncellenecektir.</p></div>
+</main><script>
+const scenes=[
+["Terk edilmiş depo","Şifreli bir mesaj seni limandaki terk edilmiş depoya getirdi. İçeriden mavi bir ışık yanıp sönüyor. Kulaklığında tek bir cümle duyuluyor: “Protokol başladı.”",
+[["Kamerayı devre dışı bırak",{i:15},"Kamera döngüye alındı."],["Arka pencereden gir",{h:-10,s:-5,i:5},"Cam kırıldı ama içeridesin."],["Ana kapıyı zorla",{h:-15,s:-30},"Alarm çaldı."]]],
+["Şifreli terminal","Deponun ortasında çalışan tek cihaz eski bir terminal. Ekranda PROTOKOL-7 yazıyor. Yan odadan ayak sesleri geliyor.",
+[["Terminali kopyala",{i:30,s:-5},"Dosyaların bir kısmını aldın."],["Ayak seslerini takip et",{i:15,s:-15},"Gizli geçidi buldun."],["Elektriği kes",{i:5,s:15},"Karanlık avantaj sağladı."]]],
+["Yeraltı geçidi","Koridor ikiye ayrılıyor. Solda sunucu odası, sağda silahlı bir nöbetçi var.",
+[["Sunucu odasına sız",{i:25,s:-10},"Protokolün ağını keşfettin."],["Nöbetçiyi etkisizleştir",{h:-5,s:-5,i:10},"Kartını aldın."],["Başka yol ara",{s:10,i:5},"Havalandırmayı buldun."]]],
+["Merkez oda","Duvar boyunca ekranlarda şehir haritası var. Geri sayım başladı: 00:02:00.",
+[["Ağı kapat",{i:15,s:-10},"Ana düğüme eriştin."],["Verileri indir",{i:30,s:-20},"Arşivi kopyaladın."],["Merkezi sabote et",{h:-20,s:-20,i:10},"Geri sayım durdu."]]],
+["Son karar","Kulaklığındaki ses: “Dosyayı bize teslim et.” Kayıtlar, seni gönderenlerin de Protokolün parçası olabileceğini gösteriyor.",
+[["Dosyayı teslim et",{i:5},"Teslim"],["Dosyayı sakla",{s:-10,i:10},"Sakla"],["Her şeyi kamuya aç",{s:-30,i:20},"Yayınla"]]]
+];
+let x;const $=id=>document.getElementById(id);function clamp(n){return Math.max(0,Math.min(100,n))}
+function stats(){x.h=clamp(x.h);x.s=clamp(x.s);x.i=clamp(x.i);for(const k of ["h","s","i"]){$(k).style.width=x[k]+"%";$(k+"t").textContent=x[k]}}
+function render(){stats();let q=scenes[x.n];$("chapter").textContent=`BÖLÜM ${x.n+1} / ${scenes.length}`;$("title").textContent=q[0];$("story").textContent=q[1];$("result").innerHTML="";$("choices").innerHTML="";q[2].forEach(c=>{let b=document.createElement("button");b.textContent=c[0];b.onclick=()=>choose(c);$("choices").appendChild(b)})}
+function choose(c){for(const [k,v] of Object.entries(c[1]))x[k]+=v;stats();if(x.h<=0)return end("Görev başarısız","Operasyon sırasında ağır yaralandın.");if(x.n===scenes.length-1){let m=c[2]==="Teslim"?"Dosyayı teslim ettin. Artık sen de Protokolün içindesin.":c[2]==="Sakla"?"Dosyayı sakladın. Protokol artık seni arıyor.":"Dosyaları yayınladın. Gölge Protokolü açığa çıktı.";return end("Operasyon tamamlandı",m)}x.n++;render()}
+function end(t,m){$("chapter").textContent="SONUÇ";$("title").textContent=t;$("story").textContent=m;$("choices").innerHTML="";$("result").innerHTML=`<div class="result"><b>Görev puanı: ${Math.round((x.h+x.s+x.i)/3)}/100</b><br>Sağlık ${x.h} · Gizlilik ${x.s} · İstihbarat ${x.i}</div>`}
+function reset(){x={h:100,s:100,i:0,n:0};render()}$("restart").onclick=reset;$("privacyBtn").onclick=()=>{$("privacy").style.display=$("privacy").style.display==="none"?"block":"none"};reset();
+</script></body></html>
