@@ -1,42 +1,223 @@
 <!doctype html>
-<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="theme-color" content="#090d12">
 <title>Gölge Protokolü</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0b0f14;color:#edf2f7;font:16px system-ui,sans-serif}
-main{max-width:720px;margin:auto;padding:18px}.card{background:#121923;border:1px solid #273243;border-radius:18px;padding:18px;margin-bottom:14px}
-small{color:#91a0b5;letter-spacing:.12em}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}.stat{font-size:13px}
-.bar{height:8px;background:#26303e;border-radius:9px;overflow:hidden;margin-top:6px}.fill{height:100%;background:#8ab4f8}
-h1{font-size:24px;margin:5px 0}h2{font-size:21px;margin:8px 0 12px}p{line-height:1.55;color:#d6deea}
+*{box-sizing:border-box}
+body{margin:0;background:#090d12;color:#edf2f7;font:16px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:760px;margin:auto;padding:16px}
+.card{background:#111923;border:1px solid #263244;border-radius:18px;padding:17px;margin-bottom:13px;box-shadow:0 8px 30px rgba(0,0,0,.18)}
+small{color:#8ea1b8;letter-spacing:.12em;font-size:11px}
+h1{font-size:25px;margin:5px 0} h2{font-size:21px;margin:8px 0 11px}
+p{line-height:1.55;color:#d3ddea;margin:10px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+.stat{font-size:13px} .bar{height:8px;background:#26303e;border-radius:9px;overflow:hidden;margin-top:6px}
+.fill{height:100%;background:#8ab4f8;transition:width .25s ease}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.pill{display:inline-block;border:1px solid #354359;border-radius:999px;padding:5px 9px;font-size:12px;color:#b9c7d9}
 button{width:100%;min-height:50px;margin:6px 0;border:1px solid #354359;border-radius:13px;background:#182231;color:white;padding:12px;text-align:left;font-size:16px}
-button:active{background:#26364c}.restart{text-align:center;background:#233654}.result{padding:12px;border:1px solid #354359;border-radius:12px;margin-top:12px;color:#b9c7d9}
-@media(max-width:420px){.stats{grid-template-columns:1fr}.card{padding:15px}}
-</style></head><body><main>
-<div class="card"><small>OPERASYON 01 · 02:17</small><h1>GÖLGE PROTOKOLÜ</h1><div class="stats">
-<div class="stat">Sağlık <b id="ht">100</b><div class="bar"><div id="h" class="fill"></div></div></div>
-<div class="stat">Gizlilik <b id="st">100</b><div class="bar"><div id="s" class="fill"></div></div></div>
-<div class="stat">İstihbarat <b id="it">0</b><div class="bar"><div id="i" class="fill"></div></div></div>
-</div></div>
-<div class="card"><small id="chapter"></small><h2 id="title"></h2><p id="story"></p><div id="choices"></div><div id="result"></div></div>
-<button class="restart" id="restart">Görevi yeniden başlat</button>
-<button class="restart" id="privacyBtn">Gizlilik politikası</button>
-<div class="card" id="privacy" style="display:none"><small>GİZLİLİK POLİTİKASI</small><h2>Gölge Protokolü</h2><p>Bu sürüm hesap oluşturmaz, reklam veya analiz SDK'sı içermez ve uygulama kodu kullanıcıdan kişisel veri toplamaz ya da üçüncü taraflarla paylaşmaz. Oyun ilerlemesi yalnızca açık uygulama oturumu sırasında cihaz belleğinde tutulur ve kalıcı olarak saklanmaz.</p><p>Gizlilikle ilgili sorular veya talepler için Google Play mağaza sayfasındaki <b>Geliştirici iletişim bilgileri</b> bölümünü kullanabilirsiniz. Uygulamanın veri kullanımı gelecekte değişirse bu politika ve Google Play Veri güvenliği beyanı güncellenecektir.</p></div>
-</main><script>
-const scenes=[
-["Terk edilmiş depo","Şifreli bir mesaj seni limandaki terk edilmiş depoya getirdi. İçeriden mavi bir ışık yanıp sönüyor. Kulaklığında tek bir cümle duyuluyor: “Protokol başladı.”",
-[["Kamerayı devre dışı bırak",{i:15},"Kamera döngüye alındı."],["Arka pencereden gir",{h:-10,s:-5,i:5},"Cam kırıldı ama içeridesin."],["Ana kapıyı zorla",{h:-15,s:-30},"Alarm çaldı."]]],
-["Şifreli terminal","Deponun ortasında çalışan tek cihaz eski bir terminal. Ekranda PROTOKOL-7 yazıyor. Yan odadan ayak sesleri geliyor.",
-[["Terminali kopyala",{i:30,s:-5},"Dosyaların bir kısmını aldın."],["Ayak seslerini takip et",{i:15,s:-15},"Gizli geçidi buldun."],["Elektriği kes",{i:5,s:15},"Karanlık avantaj sağladı."]]],
-["Yeraltı geçidi","Koridor ikiye ayrılıyor. Solda sunucu odası, sağda silahlı bir nöbetçi var.",
-[["Sunucu odasına sız",{i:25,s:-10},"Protokolün ağını keşfettin."],["Nöbetçiyi etkisizleştir",{h:-5,s:-5,i:10},"Kartını aldın."],["Başka yol ara",{s:10,i:5},"Havalandırmayı buldun."]]],
-["Merkez oda","Duvar boyunca ekranlarda şehir haritası var. Geri sayım başladı: 00:02:00.",
-[["Ağı kapat",{i:15,s:-10},"Ana düğüme eriştin."],["Verileri indir",{i:30,s:-20},"Arşivi kopyaladın."],["Merkezi sabote et",{h:-20,s:-20,i:10},"Geri sayım durdu."]]],
-["Son karar","Kulaklığındaki ses: “Dosyayı bize teslim et.” Kayıtlar, seni gönderenlerin de Protokolün parçası olabileceğini gösteriyor.",
-[["Dosyayı teslim et",{i:5},"Teslim"],["Dosyayı sakla",{s:-10,i:10},"Sakla"],["Her şeyi kamuya aç",{s:-30,i:20},"Yayınla"]]]
+button:active{background:#26364c} button:disabled{opacity:.55}
+.secondary{text-align:center;background:#15202d}
+.result{padding:13px;border:1px solid #354359;border-radius:12px;margin-top:12px;color:#c3cfdd;background:#0e151f}
+.choice-result{font-size:13px;color:#9db1c9;margin:8px 2px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.ach{padding:10px;border:1px solid #2b394d;border-radius:12px;color:#91a0b5;font-size:13px}
+.ach.on{color:#edf2f7;border-color:#52657f;background:#162130}
+.notice{font-size:13px;color:#9db1c9}
+.hidden{display:none}
+@media(max-width:520px){.stats,.grid{grid-template-columns:1fr}.card{padding:15px}}
+</style>
+</head>
+<body>
+<main>
+<div class="card">
+  <div class="row"><small>OPERASYON · GÖLGE AĞI</small><span class="pill" id="progressPill">0 / 9</span></div>
+  <h1>GÖLGE PROTOKOLÜ</h1>
+  <div class="stats">
+    <div class="stat">Sağlık <b id="ht">100</b><div class="bar"><div id="h" class="fill"></div></div></div>
+    <div class="stat">Gizlilik <b id="st">100</b><div class="bar"><div id="s" class="fill"></div></div></div>
+    <div class="stat">İstihbarat <b id="it">0</b><div class="bar"><div id="i" class="fill"></div></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="row"><small>GÜNÜN MEYDAN OKUMASI</small><span class="pill" id="dailyStatus">AKTİF</span></div>
+  <p id="dailyText"></p>
+</div>
+
+<div class="card">
+  <small id="chapter"></small>
+  <h2 id="title"></h2>
+  <p id="story"></p>
+  <div id="choices"></div>
+  <div id="choiceResult" class="choice-result"></div>
+  <div id="result"></div>
+</div>
+
+<div class="card">
+  <div class="row"><small>BAŞARIMLAR</small><span class="pill" id="achievementCount">0 / 8</span></div>
+  <div class="grid" id="achievements"></div>
+</div>
+
+<button class="secondary" id="restart">Görevi yeniden başlat</button>
+<button class="secondary" id="privacyBtn">Gizlilik politikası</button>
+<div class="card hidden" id="privacy">
+  <small>GİZLİLİK POLİTİKASI</small>
+  <h2>Gölge Protokolü</h2>
+  <p>Bu sürüm hesap oluşturmaz, reklam veya analiz SDK'sı içermez ve uygulama kodu kullanıcıdan kişisel veri toplamaz ya da üçüncü taraflarla paylaşmaz.</p>
+  <p>Oyun ilerlemesi, açılan finaller, başarımlar ve günlük meydan okuma durumu yalnızca cihazdaki WebView yerel depolamasında saklanır. Bu veriler uygulamayı sıfırladığınızda veya uygulama verilerini temizlediğinizde silinebilir.</p>
+  <p>Gizlilikle ilgili sorular için Google Play mağaza sayfasındaki geliştirici iletişim bilgilerini kullanabilirsiniz.</p>
+</div>
+
+<div class="card">
+  <small>OPERASYON DOSYASI</small>
+  <p class="notice">9 kritik karar · 5 farklı final · 19.683 karar yolu · otomatik kayıt · 8 başarım</p>
+  <p class="notice">Özel Dosyalar: yeni görevler için ayrılmış kilitli bölüm.</p>
+</div>
+</main>
+
+<script id="game-data" type="application/json">{"scenes":[{"title":"Terk edilmiş depo","story":"Şifreli bir mesaj seni limandaki terk edilmiş depoya getirdi. İçeriden mavi bir ışık yanıp sönüyor. Kulaklığında tek bir cümle duyuluyor: “Protokol başladı.”","choices":[{"label":"Kamerayı döngüye al","effects":{"i":15,"s":5},"result":"Kamera 43 saniyelik bir döngüye alındı.","flag":"camera_loop"},{"label":"Arka pencereden gir","effects":{"h":-8,"s":-5,"i":8},"result":"Sessiz değildi ama içeridesin.","flag":"window_entry"},{"label":"Ana kapıyı zorla","effects":{"h":-12,"s":-20,"i":3},"result":"Alarm kısa süreliğine devreye girdi.","flag":"alarm_seen"}]},{"title":"Şifreli terminal","story":"Deponun ortasında çalışan tek cihaz eski bir terminal. Ekranda PROTOKOL-7 yazıyor. Yan odadan ayak sesleri geliyor.","choices":[{"label":"Terminali kopyala","effects":{"i":25,"s":-5},"result":"Şifreli arşivin büyük bölümünü aldın.","flag":"archive_copy"},{"label":"Ayak seslerini takip et","effects":{"i":12,"s":-10},"result":"Gizli bir geçidin yerini öğrendin.","flag":"followed_steps"},{"label":"Elektriği kes","effects":{"i":5,"s":15},"result":"Karanlık sana birkaç dakika kazandırdı.","flag":"power_cut"}]},{"title":"Yeraltı geçidi","story":"Koridor ikiye ayrılıyor. Solda sunucu odası, sağda kimliği belirsiz bir nöbetçi var. Haritadaki bu bölüm resmî kayıtlarda görünmüyor.","choices":[{"label":"Sunucu odasına sız","effects":{"i":24,"s":-8},"result":"Protokolün şehir ağındaki izlerini buldun.","flag":"server_map"},{"label":"Nöbetçiyi atlat","effects":{"h":-5,"s":5,"i":8},"result":"Temas kurmadan güvenlik kartını kopyaladın.","flag":"guard_bypassed"},{"label":"Havalandırmadan ilerle","effects":{"h":-8,"s":12,"i":4},"result":"Yavaş ama görünmez bir rota buldun.","flag":"vent_route"}]},{"title":"Sahte kimlik","story":"Geçidin sonunda senin fotoğrafınla hazırlanmış bir erişim kartı var. Kartın oluşturulma tarihi, görevi kabul ettiğin zamandan üç gün önce.","choices":[{"label":"Kartı kullan","effects":{"i":8,"s":14},"result":"Sistem seni beklenen personel gibi kabul etti.","flag":"used_false_id"},{"label":"Kartı incele","effects":{"i":22,"s":-4},"result":"Kartın emrini veren kurumun izini buldun.","flag":"trace_employers"},{"label":"Kartı imha et","effects":{"i":5,"s":10},"result":"Seni tanımlayan fiziksel kanıtı ortadan kaldırdın.","flag":"destroyed_id"}]},{"title":"Boş istasyon","story":"Eski metro istasyonunda hiçbir tren yok. Perondaki ekranlarda aynı sayı yanıp sönüyor: 17. Bir bakım tünelinden zayıf bir sinyal geliyor.","choices":[{"label":"Sinyali takip et","effects":{"i":18,"s":-7},"result":"Sinyalin mobil bir röleye ait olduğunu keşfettin.","flag":"relay_found"},{"label":"Kameraları kör et","effects":{"s":20,"i":4},"result":"İstasyondaki görüntü kaydı kesildi.","flag":"cameras_blind"},{"label":"Acil çıkışı aç","effects":{"h":5,"s":-8,"i":6},"result":"Kaçış rotanı güvenceye aldın.","flag":"exit_ready"}]},{"title":"Kara kutu","story":"Bakım tünelindeki metal kasada, şehir çapındaki kesintilere ait kayıtlar var. Dosyalardan biri doğrudan senin kod adını taşıyor.","choices":[{"label":"Tüm kaydı çöz","effects":{"i":28,"s":-12},"result":"Protokolün seni de test ettiğini anladın.","flag":"blackbox_full"},{"label":"Yalnızca kendi dosyanı aç","effects":{"i":16,"s":2},"result":"Görevin başlangıcının planlı olduğunu doğruladın.","flag":"self_file"},{"label":"Kutuyu işaretle ve ilerle","effects":{"i":5,"s":16},"result":"Delili yerinde bırakıp iz bırakmadan ayrıldın.","flag":"blackbox_marked"}]},{"title":"Gözlem kulesi","story":"Çatıda şehri izleyen anten dizisi, görev boyunca yaptığın hamleleri canlı olarak kaydediyor. Bir keskin nişancı lazeri duvarda gezinmeye başlıyor.","choices":[{"label":"Anteni sabote et","effects":{"h":-12,"s":8,"i":10},"result":"Takip sistemi kısa süreliğine sustu.","flag":"anten_down"},{"label":"Kaydı tersine çevir","effects":{"i":20,"s":-5},"result":"Seni izleyen merkeze sahte telemetri gönderdin.","flag":"telemetry_spoof"},{"label":"Teması kes ve saklan","effects":{"h":5,"s":18,"i":2},"result":"Lazer kaybolana kadar görünmez kaldın.","flag":"hid_rooftop"}]},{"title":"Ana düğüm","story":"Kulenin altındaki odada geri sayım başladı: 00:02:00. Şehir ağını yöneten ana düğüm aynı anda üç işlem yürütüyor: gözetim, arşivleme ve erişim kilidi.","choices":[{"label":"Gözetimi kapat","effects":{"s":22,"i":8},"result":"Şehirdeki takip akışı koptu.","flag":"surveillance_off"},{"label":"Arşivi indir","effects":{"i":25,"s":-15},"result":"Protokolün karar kayıtlarını aldın.","flag":"master_archive"},{"label":"Erişim kilidini kır","effects":{"h":-10,"s":-8,"i":15},"result":"Merkezin kontrol kapısı açıldı.","flag":"lock_broken"}]},{"title":"Son karar","story":"Kulaklığındaki ses son kez konuşuyor: “Dosyayı bize teslim et.” Kayıtlar, seni görevlendirenlerin de Protokolün parçası olabileceğini gösteriyor.","choices":[{"label":"Dosyayı teslim et","effects":{"i":4},"result":"Teslim","finalAction":"deliver"},{"label":"Dosyayı sakla ve kaybol","effects":{"s":10,"i":6},"result":"Sakla","finalAction":"hide"},{"label":"Her şeyi kamuya aç","effects":{"s":-20,"i":12},"result":"Yayınla","finalAction":"publish"}]}]}</script>
+<script>
+(function(){
+"use strict";
+const DATA=JSON.parse(document.getElementById("game-data").textContent);
+const SAVE_KEY="golge_protokolu_save_v3";
+const META_KEY="golge_protokolu_meta_v3";
+const $=id=>document.getElementById(id);
+const dailyMissions=[
+  {id:"stealth",text:"Operasyonu en az 70 gizlilik ile tamamla.",check:x=>x.s>=70},
+  {id:"intel",text:"Operasyonu en az 80 istihbarat ile tamamla.",check:x=>x.i>=80},
+  {id:"health",text:"Operasyonu en az 70 sağlık ile tamamla.",check:x=>x.h>=70}
 ];
-let x;const $=id=>document.getElementById(id);function clamp(n){return Math.max(0,Math.min(100,n))}
-function stats(){x.h=clamp(x.h);x.s=clamp(x.s);x.i=clamp(x.i);for(const k of ["h","s","i"]){$(k).style.width=x[k]+"%";$(k+"t").textContent=x[k]}}
-function render(){stats();let q=scenes[x.n];$("chapter").textContent=`BÖLÜM ${x.n+1} / ${scenes.length}`;$("title").textContent=q[0];$("story").textContent=q[1];$("result").innerHTML="";$("choices").innerHTML="";q[2].forEach(c=>{let b=document.createElement("button");b.textContent=c[0];b.onclick=()=>choose(c);$("choices").appendChild(b)})}
-function choose(c){for(const [k,v] of Object.entries(c[1]))x[k]+=v;stats();if(x.h<=0)return end("Görev başarısız","Operasyon sırasında ağır yaralandın.");if(x.n===scenes.length-1){let m=c[2]==="Teslim"?"Dosyayı teslim ettin. Artık sen de Protokolün içindesin.":c[2]==="Sakla"?"Dosyayı sakladın. Protokol artık seni arıyor.":"Dosyaları yayınladın. Gölge Protokolü açığa çıktı.";return end("Operasyon tamamlandı",m)}x.n++;render()}
-function end(t,m){$("chapter").textContent="SONUÇ";$("title").textContent=t;$("story").textContent=m;$("choices").innerHTML="";$("result").innerHTML=`<div class="result"><b>Görev puanı: ${Math.round((x.h+x.s+x.i)/3)}/100</b><br>Sağlık ${x.h} · Gizlilik ${x.s} · İstihbarat ${x.i}</div>`}
-function reset(){x={h:100,s:100,i:0,n:0};render()}$("restart").onclick=reset;$("privacyBtn").onclick=()=>{$("privacy").style.display=$("privacy").style.display==="none"?"block":"none"};reset();
-</script></body></html>
+const achievementDefs=[
+  {id:"first",name:"İlk Temas",desc:"İlk kararı ver."},
+  {id:"ghost",name:"Hayalet",desc:"3. bölümden sonra 85+ gizlilik koru."},
+  {id:"archive",name:"Arşivci",desc:"80 istihbarata ulaş."},
+  {id:"steel",name:"Çelik Sinir",desc:"7. bölümden sonra 75+ sağlık koru."},
+  {id:"doubt",name:"Şüpheci",desc:"Sahte kimliğin kaynağını araştır."},
+  {id:"expose",name:"Açığa Çıkaran",desc:"Gün Işığı finaline ulaş."},
+  {id:"lost",name:"Kayıp Ajan",desc:"Kayıp Sinyal finaline ulaş."},
+  {id:"all",name:"Tüm Sonlar",desc:"Beş finalin tamamını aç."}
+];
+let meta=loadMeta();
+let x=loadState()||freshState();
+
+function freshState(){return {h:100,s:100,i:0,n:0,path:[],flags:[],ended:false,ending:null}}
+function clamp(n){return Math.max(0,Math.min(100,n))}
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function dayIndex(){return Math.floor(Date.now()/86400000)%dailyMissions.length}
+function daily(){return dailyMissions[dayIndex()]}
+function loadMeta(){
+  try{return Object.assign({achievements:[],endings:[],dailyCompleted:{}},JSON.parse(localStorage.getItem(META_KEY)||"{}"));}
+  catch(e){return {achievements:[],endings:[],dailyCompleted:{}};}
+}
+function loadState(){
+  try{const v=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");return v&&typeof v.n==="number"?v:null;}
+  catch(e){return null;}
+}
+function save(){
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(x));localStorage.setItem(META_KEY,JSON.stringify(meta));}catch(e){}
+}
+function unlock(id){
+  if(!meta.achievements.includes(id)){meta.achievements.push(id);save();renderAchievements();}
+}
+function stats(){
+  x.h=clamp(x.h);x.s=clamp(x.s);x.i=clamp(x.i);
+  ["h","s","i"].forEach(k=>{$(k).style.width=x[k]+"%";$(k+"t").textContent=x[k];});
+  $("progressPill").textContent=(x.ended?9:Math.min(x.n,9))+" / 9";
+}
+function renderDaily(){
+  const d=daily();const done=!!meta.dailyCompleted[todayKey()];
+  $("dailyText").textContent=d.text;
+  $("dailyStatus").textContent=done?"TAMAMLANDI":"AKTİF";
+}
+function renderAchievements(){
+  $("achievementCount").textContent=meta.achievements.length+" / 8";
+  $("achievements").innerHTML="";
+  achievementDefs.forEach(a=>{
+    const div=document.createElement("div");
+    const on=meta.achievements.includes(a.id);
+    div.className="ach"+(on?" on":"");
+    div.innerHTML="<b>"+(on?"✓ ":"○ ")+a.name+"</b><br>"+a.desc;
+    $("achievements").appendChild(div);
+  });
+}
+function render(){
+  stats();renderDaily();renderAchievements();
+  if(x.ended){renderEnding();return;}
+  const q=DATA.scenes[x.n];
+  $("chapter").textContent="BÖLÜM "+(x.n+1)+" / "+DATA.scenes.length;
+  $("title").textContent=q.title;
+  $("story").textContent=q.story;
+  $("result").innerHTML="";
+  $("choiceResult").textContent="";
+  $("choices").innerHTML="";
+  q.choices.forEach((c,idx)=>{
+    const b=document.createElement("button");
+    b.textContent=c.label;
+    b.onclick=()=>choose(idx);
+    $("choices").appendChild(b);
+  });
+}
+function choose(idx){
+  const q=DATA.scenes[x.n],c=q.choices[idx];
+  Object.keys(c.effects||{}).forEach(k=>x[k]=(x[k]||0)+c.effects[k]);
+  x.h=clamp(x.h);x.s=clamp(x.s);x.i=clamp(x.i);
+  if(c.flag&&!x.flags.includes(c.flag))x.flags.push(c.flag);
+  x.path.push(idx);
+  if(x.path.length===1)unlock("first");
+  if(x.n>=2&&x.s>=85)unlock("ghost");
+  if(x.i>=80)unlock("archive");
+  if(x.n>=6&&x.h>=75)unlock("steel");
+  if(c.flag==="trace_employers")unlock("doubt");
+  $("choiceResult").textContent=c.result||"";
+  if(x.n===DATA.scenes.length-1){
+    finish(c.finalAction||"");
+    return;
+  }
+  x.n++;
+  save();
+  render();
+}
+function resolveEnding(action){
+  if(x.h<=60||x.s<=20)return {id:"lost_signal",title:"KAYIP SİNYAL",text:"Operasyon tamamlandı ama Protokol seni işaretledi. Şehirden çıkışın sırasında bağlantın kesildi; kayıtlarda artık yalnızca bir gölge olarak varsın."};
+  if(action==="publish"&&x.i>=75)return {id:"daylight",title:"GÜN IŞIĞI",text:"Arşivi doğrulanabilir parçalar halinde yayımladın. Gölge Protokolü artık gizli değil; fakat seni kimin izlediği hâlâ belirsiz."};
+  if(action==="hide"&&x.s>=60)return {id:"ghost",title:"HAYALET",text:"Dosyayı saklayıp izini sildin. Protokol seni bulamıyor; elindeki bilgi ise gelecekteki tek kozun."};
+  if(action==="deliver"&&(x.flags.includes("trace_employers")||x.i>=70))return {id:"double_agent",title:"ÇİFTE AJAN",text:"Dosyayı teslim ettin ama kopyasını ve kaynağın izini korudun. Seni yöneten yapı, artık senin de onları izlediğini bilmiyor."};
+  return {id:"gray",title:"GRİ PROTOKOL",text:"Hiçbir taraf tam olarak kazanmadı. Dosyanın bir kısmı sende, bir kısmı sistemde kaldı. Şehir normal görünüyor; oyun ise bitmiş olmayabilir."};
+}
+function finish(action){
+  const e=resolveEnding(action);
+  x.ended=true;x.ending=e;
+  if(!meta.endings.includes(e.id))meta.endings.push(e.id);
+  if(e.id==="daylight")unlock("expose");
+  if(e.id==="lost_signal")unlock("lost");
+  if(meta.endings.length>=5)unlock("all");
+  const d=daily();
+  if(d.check(x))meta.dailyCompleted[todayKey()]=true;
+  save();render();
+}
+function renderEnding(){
+  const e=x.ending;
+  $("chapter").textContent="SONUÇ";
+  $("title").textContent=e.title;
+  $("story").textContent=e.text;
+  $("choices").innerHTML="";
+  $("choiceResult").textContent="";
+  const score=Math.round((x.h+x.s+x.i)/3);
+  $("result").innerHTML="<div class='result'><b>Görev puanı: "+score+"/100</b><br>Sağlık "+x.h+" · Gizlilik "+x.s+" · İstihbarat "+x.i+"<br>Açılan finaller: "+meta.endings.length+"/5</div>";
+  stats();renderDaily();renderAchievements();
+}
+function reset(){
+  x=freshState();save();render();
+}
+$("restart").onclick=reset;
+$("privacyBtn").onclick=()=>$("privacy").classList.toggle("hidden");
+render();
+})();
+</script>
+</body>
+</html>
